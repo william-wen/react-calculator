@@ -9,37 +9,62 @@ class App extends Component {
     super(props);
     this.state = {
       display: "",
+      memory: "",
     };
   }
 
-  handleClick(buttonValue, display) {
+  handleClick(buttonValue, display, memory) {
     if (buttonValue === 'clear'){
       this.setState({
-        display: ""
+        display: "",
+        memory: "",
       });
     }
     else if (buttonValue === '='){
-      let newDisplay = display.replace(/x/g, "*");
-      console.log(newDisplay);
-      console.log(math.evaluate(newDisplay));
-      this.setState({
-        display: math.evaluate(newDisplay)
-      });
+      try {
+        let newDisplay = display.replace(/x/g, "*");
+        let newMemory = memory.replace(/x/g, "*");
+        if (newMemory[newMemory.length - 1] === "="){
+          newDisplay += newMemory[newMemory.length - 3] + newMemory[newMemory.length - 2];
+          this.setState({
+            display: (math.evaluate(newDisplay)).toString(),
+            memory: newMemory,
+          })
+        }
+        else {
+          this.setState({
+            display: (math.evaluate(newDisplay)).toString(),
+            memory: newMemory + '=',
+          });
+        }
+      }
+      catch(err) {
+        this.setState({
+          display: "Invalid Expression"
+        });
+        setTimeout(() => {
+          this.setState({
+            display: "",
+            memory: "",
+          })
+        }, 350);
+      }
     }
     else {
       this.setState({
-        display: display + buttonValue
+        display: display + buttonValue,
+        memory: memory + buttonValue
       });
     }
   }
 
   render () {
-    const { display } = this.state;
+    const { display, memory } = this.state;
     return (
       <div className="App">
         <div className="calculator">
           <Header display={display}/>
-          <Keypad onClick={ (buttonValue) => this.handleClick(buttonValue, display) }/>
+          <Keypad onClick={ (buttonValue) => this.handleClick(buttonValue, display, memory) }/>
         </div>
       </div>
     );
