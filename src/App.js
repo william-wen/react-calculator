@@ -24,12 +24,16 @@ class App extends Component {
       try {
         let newDisplay = display.replace(/x/g, "*");
         let newMemory = memory.replace(/x/g, "*");
+        console.log(newDisplay)
+        console.log(newMemory)
         if (newMemory[newMemory.length - 1] === "="){
-          newDisplay += newMemory[newMemory.length - 3] + newMemory[newMemory.length - 2];
-          this.setState({
-            display: (math.evaluate(newDisplay)).toString(),
-            memory: newMemory,
-          })
+          if (newMemory[newMemory.length - 3]){
+            newDisplay += newMemory[newMemory.length - 3] + newMemory[newMemory.length - 2];
+            this.setState({
+              display: (math.evaluate(newDisplay)).toString(),
+              memory: newMemory,
+            })
+          }
         }
         else {
           this.setState({
@@ -51,10 +55,17 @@ class App extends Component {
       }
     }
     else {
-      this.setState({
-        display: display + buttonValue,
-        memory: memory + buttonValue
-      });
+      if (memory[memory.length - 1] === "=" && !isNaN(buttonValue)){
+        this.setState({
+          display: buttonValue,
+          memory: buttonValue,
+        });
+      } else {
+        this.setState({
+          display: display + buttonValue,
+          memory: memory + buttonValue
+        });
+      }
     }
   }
 
